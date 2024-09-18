@@ -30,8 +30,8 @@ Include `plotters-iced` in your `Cargo.toml` dependencies:
 
 ```toml
 [dependencies]
-plotters-iced = "0.10"
-iced = { version = "0.12", features = ["canvas", "tokio"] }
+plotters-iced = "0.11"
+iced = { version = "0.13", features = ["canvas", "tokio"] }
 plotters="0.3"
 ```
 
