@@ -223,19 +223,6 @@ where
         let font = style_to_font(style);
         let pos = pos.cvt_point();
 
-        //let (w, h) = self.estimate_text_size(text, style)?;
-        let text = canvas::Text {
-            content: text.to_owned(),
-            position: pos,
-            color: cvt_color(&style.color()),
-            size: (style.size() as f32).into(),
-            line_height: Default::default(),
-            font,
-            horizontal_alignment,
-            vertical_alignment,
-            shaping: self.shaping,
-        };
-
         //TODO: fix rotation until text rotation is supported by Iced
         let rotate = match style.transform() {
             FontTransform::None => None,
@@ -249,7 +236,7 @@ where
                 frame.rotate(Degrees(rotate));
 
                 let text_canvas = canvas::Text {
-                    content: text.content.clone(),
+                    content: text.to_string(),
                     position: Point::new(0.0, 0.0),
                     color: cvt_color(&style.color()),
                     size: (style.size() as f32).into(),
@@ -264,7 +251,7 @@ where
             });
         } else {
             let text_canvas = canvas::Text {
-                content: text.content.clone(),
+                content: text.to_string(),
                 position: pos,
                 color: cvt_color(&style.color()),
                 size: (style.size() as f32).into(),
