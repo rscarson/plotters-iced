@@ -4,9 +4,9 @@
 // Copyright: 2022, Joylei <leingliu@gmail.com>
 // License: MIT
 
-use iced::Rectangle;
 use iced_graphics::core::text::Paragraph;
 use iced_graphics::core::{Degrees, Point, Vector};
+use iced_widget::core::Rectangle;
 use iced_widget::{
     canvas,
     core::{
