@@ -232,25 +232,48 @@ where
             vertical_alignment,
             shaping: self.shaping,
         };
+        
         //TODO: fix rotation until text rotation is supported by Iced
-        // let rotate = match style.transform() {
-        //     FontTransform::None => None,
-        //     FontTransform::Rotate90 => Some(90.0),
-        //     FontTransform::Rotate180 => Some(180.0),
-        //     FontTransform::Rotate270 => Some(270.0),
-        //     FontTransform::RotateAngle(angle) => Some(angle),
-        // };
-        // if let Some(rotate) = rotate {
-        //     dbg!(rotate);
-        //     self.frame.with_save(move |frame| {
-        //         frame.fill_text(text);
-        //         frame.translate(Vector::new(pos.x + w as f32 / 2.0, pos.y + h as f32 / 2.0));
-        //         let angle = 2.0 * std::f32::consts::PI * rotate / 360.0;
-        //         frame.rotate(angle);
-        //     });
-        // } else {
-        //     self.frame.fill_text(text);
-        // }
+        let rotate = match style.transform() {
+            FontTransform::None => None,
+            FontTransform::Rotate90 => Some(90.0),
+            FontTransform::Rotate180 => Some(180.0),
+            FontTransform::Rotate270 => Some(270.0),
+        };
+        if let Some(rotate) = rotate {
+            self.frame.with_save(|frame| {
+                frame.translate(Vector::new(pos.x, pos.y));
+                frame.rotate(Degrees(rotate));
+
+                let text_canvas = canvas::Text {
+                    content: text.to_owned(),
+                    position: Point::new(0.0, 0.0),
+                    color: cvt_color(&style.color()),
+                    size: (style.size() as f32).into(),
+                    line_height: Default::default(),
+                    font,
+                    horizontal_alignment,
+                    vertical_alignment,
+                    shaping: self.shaping,
+                };
+
+                frame.fill_text(text_canvas);
+            });
+        } else {
+            let text_canvas = canvas::Text {
+                content: text.to_owned(),
+                position: pos,
+                color: cvt_color(&style.color()),
+                size: (style.size() as f32).into(),
+                line_height: Default::default(),
+                font,
+                horizontal_alignment,
+                vertical_alignment,
+                shaping: self.shaping,
+            };
+
+            self.frame.fill_text(text_canvas);
+        }
         self.frame.fill_text(text);
 
         Ok(())
