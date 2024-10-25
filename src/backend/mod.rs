@@ -249,7 +249,7 @@ where
                 frame.rotate(Degrees(rotate));
 
                 let text_canvas = canvas::Text {
-                    content: text.to_string(),
+                    content: text.content,
                     position: Point::new(0.0, 0.0),
                     color: cvt_color(&style.color()),
                     size: (style.size() as f32).into(),
@@ -264,7 +264,7 @@ where
             });
         } else {
             let text_canvas = canvas::Text {
-                content: text.to_string(),
+                content: text.content,
                 position: pos,
                 color: cvt_color(&style.color()),
                 size: (style.size() as f32).into(),
