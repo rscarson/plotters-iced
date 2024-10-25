@@ -4,15 +4,16 @@
 // Copyright: 2022, Joylei <leingliu@gmail.com>
 // License: MIT
 
-use std::collections::HashSet;
-
 use iced_graphics::core::text::Paragraph;
+use iced_graphics::core::{Degrees, Point, Vector};
+use iced_widget::core::Rectangle;
 use iced_widget::{
     canvas,
     core::{
         alignment::{Horizontal, Vertical},
         font, text, Font, Size,
     },
+    image,
     text::Shaping,
 };
 use once_cell::unsync::Lazy;
@@ -27,7 +28,9 @@ use plotters_backend::{
     DrawingErrorKind,
     FontFamily,
     FontStyle,
+    FontTransform,
 };
+use std::collections::HashSet;
 
 use crate::error::Error;
 use crate::utils::{cvt_color, cvt_stroke, CvtPoint};
