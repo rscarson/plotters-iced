@@ -68,8 +68,8 @@ where
     }
 }
 
-impl<'a, Message, Theme, Renderer, C> Widget<Message, Theme, Renderer>
-    for ChartWidget<'a, Message, Theme, Renderer, C>
+impl<Message, Theme, Renderer, C> Widget<Message, Theme, Renderer>
+    for ChartWidget<'_, Message, Theme, Renderer, C>
 where
     C: Chart<Message>,
     Renderer: self::Renderer,

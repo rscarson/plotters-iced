@@ -8,7 +8,7 @@ publish = false
 [dependencies]
 iced = { version = "0.13", features = ["canvas"] }
 plotters-iced = { path = "../../" }
-plotters = { version = "0.3", default-features = false, features = [
+plotters = { git = "https://github.com/plotters-rs/plotters.git", rev = "0f195ea", default-features = false, features = [
     "chrono",
     "area_series",
     "line_series",

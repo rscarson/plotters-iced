@@ -28,8 +28,8 @@ use iced::{
     window, Alignment, Element, Length,
 };
 use plotters::{coord::Shift, prelude::*};
-use plotters_backend::DrawingBackend;
-use plotters_iced::{plotters_backend, Chart, ChartWidget, DrawingArea};
+use plotters_iced::{Chart, ChartWidget, DrawingArea};
+use plotters_iced::{ChartBuilder, DrawingBackend};
 
 const TITLE_FONT_SIZE: u16 = 22;
 

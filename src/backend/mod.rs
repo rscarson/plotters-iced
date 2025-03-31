@@ -16,7 +16,6 @@ use iced_widget::{
     image,
     text::Shaping,
 };
-use once_cell::unsync::Lazy;
 use plotters_backend::{
     text_anchor,
     //FontTransform,
@@ -30,7 +29,9 @@ use plotters_backend::{
     FontStyle,
     FontTransform,
 };
-use std::collections::HashSet;
+
+use dashmap::DashSet;
+use std::sync::LazyLock;
 
 use crate::error::Error;
 use crate::utils::{cvt_color, cvt_stroke, CvtPoint};
@@ -55,7 +56,7 @@ where
     }
 }
 
-impl<'a, B> DrawingBackend for IcedChartBackend<'a, B>
+impl<B> DrawingBackend for IcedChartBackend<'_, B>
 where
     B: text::Renderer<Font = Font>,
 {
@@ -320,28 +321,48 @@ where
 }
 
 fn style_to_font<S: BackendTextStyle>(style: &S) -> Font {
-    // iced font family requires static str
-    static mut FONTS: Lazy<HashSet<String>> = Lazy::new(HashSet::new);
+    //
+    // iced requires &'static str for font names, but plotters uses String
+    // So we need a static registry to convert String to &'static str
+    static FONT_REGISTRY: FontNameRegistry = FontNameRegistry::new();
 
     Font {
         family: match style.family() {
             FontFamily::Serif => font::Family::Serif,
             FontFamily::SansSerif => font::Family::SansSerif,
             FontFamily::Monospace => font::Family::Monospace,
-            FontFamily::Name(s) => {
-                let s = unsafe {
-                    if !FONTS.contains(s) {
-                        FONTS.insert(String::from(s));
-                    }
-                    FONTS.get(s).unwrap().as_str()
-                };
-                font::Family::Name(s)
-            }
+            FontFamily::Name(s) => font::Family::Name(FONT_REGISTRY.register(s)),
         },
         weight: match style.style() {
             FontStyle::Bold => font::Weight::Bold,
             _ => font::Weight::Normal,
         },
         ..Font::DEFAULT
+    }
+}
+
+/// Inner mutable registry of font names, for `iced` to use
+struct FontNameRegistry {
+    inner: LazyLock<DashSet<&'static str>>,
+}
+impl FontNameRegistry {
+    /// Create a new empty registry
+    pub const fn new() -> Self {
+        Self {
+            inner: LazyLock::new(DashSet::new),
+        }
+    }
+
+    /// Convert a name to a static string  
+    /// WARNING: Will leak the string in memory, use with caution
+    pub fn register(&self, name: impl AsRef<str>) -> &'static str {
+        if let Some(name) = self.inner.get(name.as_ref()) {
+            *name
+        } else {
+            let name = name.as_ref().to_string();
+            let name = Box::leak(name.into_boxed_str());
+            self.inner.insert(name);
+            name
+        }
     }
 }
