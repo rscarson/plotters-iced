@@ -6,7 +6,6 @@
 
 use iced_graphics::core::text::Paragraph;
 use iced_graphics::core::{Degrees, Point, Vector};
-use iced_widget::canvas::{Fill, Stroke};
 use iced_widget::core::Rectangle;
 use iced_widget::{
     canvas,
@@ -253,21 +252,7 @@ where
                     frame.rotate(Degrees(rotate));
                 }
 
-                frame.fill(
-                    &path,
-                    Fill {
-                        style: canvas::Style::Solid(color),
-                        rule: canvas::fill::Rule::EvenOdd,
-                    },
-                );
-                frame.stroke(
-                    &path,
-                    Stroke {
-                        style: canvas::Style::Solid(color),
-                        width: 0.2,
-                        ..Default::default()
-                    },
-                );
+                frame.fill(&path, color);
             });
         });
         /*
