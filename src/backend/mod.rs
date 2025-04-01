@@ -6,6 +6,7 @@
 
 use iced_graphics::core::text::Paragraph;
 use iced_graphics::core::{Degrees, Point, Vector};
+use iced_graphics::geometry;
 use iced_widget::canvas::{Fill, Stroke};
 use iced_widget::core::Rectangle;
 use iced_widget::{
@@ -233,7 +234,7 @@ where
             FontTransform::Rotate270 => Some(270.0),
         };
 
-        let text = canvas::Text {
+        let text2 = canvas::Text {
             content: text.to_string(),
             position,
             color: cvt_color(&style.color()),
@@ -245,6 +246,7 @@ where
             shaping: self.shaping,
         };
 
+        let text: geometry::Text = text.into();
         let frame = &mut self.frame;
         text.draw_with(move |path, color| {
             frame.fill(&path, color);
