@@ -6,6 +6,7 @@
 
 use iced_graphics::core::text::Paragraph;
 use iced_graphics::core::{Degrees, Point, Vector};
+use iced_widget::canvas::{Fill, Stroke};
 use iced_widget::core::Rectangle;
 use iced_widget::{
     canvas,
@@ -206,7 +207,7 @@ where
         &mut self,
         text: &str,
         style: &S,
-        pos: BackendCoord,
+        position: BackendCoord,
     ) -> Result<(), DrawingErrorKind<Self::ErrorType>> {
         if style.color().alpha == 0.0 {
             return Ok(());
@@ -222,7 +223,7 @@ where
             text_anchor::VPos::Bottom => Vertical::Bottom,
         };
         let font = style_to_font(style);
-        let pos = pos.cvt_point();
+        let position = position.cvt_point();
 
         //TODO: fix rotation until text rotation is supported by Iced
         let rotate = match style.transform() {
@@ -234,7 +235,7 @@ where
 
         let text = canvas::Text {
             content: text.to_string(),
-            position: Point::new(0.0, 0.0),
+            position,
             color: cvt_color(&style.color()),
             size: (style.size() as f32).into(),
             line_height: Default::default(),
@@ -246,14 +247,7 @@ where
 
         let frame = &mut self.frame;
         text.draw_with(move |path, color| {
-            frame.with_save(|frame| {
-                frame.translate(Vector::new(pos.x, pos.y));
-                if let Some(rotate) = rotate {
-                    frame.rotate(Degrees(rotate));
-                }
-
-                frame.fill(&path, color);
-            });
+            frame.fill(&path, color);
         });
         /*
         if let Some(rotate) = rotate {
