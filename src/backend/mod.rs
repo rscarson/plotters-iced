@@ -224,7 +224,7 @@ where
             text_anchor::VPos::Bottom => Vertical::Bottom,
         };
         let font = style_to_font(style);
-        let position = position.cvt_point();
+        let pos = position.cvt_point();
 
         //TODO: fix rotation until text rotation is supported by Iced
         let rotate = match style.transform() {
@@ -234,23 +234,35 @@ where
             FontTransform::Rotate270 => Some(270.0),
         };
 
-        let text2 = canvas::Text {
-            content: text.to_string(),
-            position,
-            color: cvt_color(&style.color()),
-            size: (style.size() as f32).into(),
-            line_height: Default::default(),
-            font,
-            horizontal_alignment,
-            vertical_alignment,
-            shaping: self.shaping,
-        };
+        let mut position = pos;
+        for line in text.split('\n') {
+            let text = canvas::Text {
+                content: text.to_string(),
+                position,
+                color: cvt_color(&style.color()),
+                size: (style.size() as f32).into(),
+                line_height: Default::default(),
+                font,
+                horizontal_alignment,
+                vertical_alignment,
+                shaping: self.shaping,
+            };
 
-        let text: geometry::Text = text.into();
-        let frame = &mut self.frame;
-        text.draw_with(move |path, color| {
-            frame.fill(&path, color);
-        });
+            let frame = &mut self.frame;
+            text.draw_with(move |path, color| {
+                frame.fill(&path, color);
+                frame.stroke(
+                    &path,
+                    Stroke {
+                        style: color.into(),
+                        width: 0.5,
+                        ..Default::default()
+                    },
+                );
+            });
+
+            position.y += style.size() as f32;
+        }
         /*
         if let Some(rotate) = rotate {
             self.frame.with_save(|frame| {
