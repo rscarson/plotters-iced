@@ -264,7 +264,7 @@ where
                     &path,
                     Stroke {
                         style: canvas::Style::Solid(color),
-                        width: 1.0,
+                        width: 0.2,
                         ..Default::default()
                     },
                 );
