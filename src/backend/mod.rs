@@ -6,6 +6,7 @@
 
 use iced_graphics::core::text::Paragraph;
 use iced_graphics::core::{Degrees, Point, Vector};
+use iced_widget::canvas::{Fill, Stroke};
 use iced_widget::core::Rectangle;
 use iced_widget::{
     canvas,
@@ -231,6 +232,45 @@ where
             FontTransform::Rotate180 => Some(180.0),
             FontTransform::Rotate270 => Some(270.0),
         };
+
+        let text = canvas::Text {
+            content: text.to_string(),
+            position: Point::new(0.0, 0.0),
+            color: cvt_color(&style.color()),
+            size: (style.size() as f32).into(),
+            line_height: Default::default(),
+            font,
+            horizontal_alignment,
+            vertical_alignment,
+            shaping: self.shaping,
+        };
+
+        let frame = &mut self.frame;
+        text.draw_with(move |path, color| {
+            frame.with_save(|frame| {
+                frame.translate(Vector::new(pos.x, pos.y));
+                if let Some(rotate) = rotate {
+                    frame.rotate(Degrees(rotate));
+                }
+
+                frame.fill(
+                    &path,
+                    Fill {
+                        style: canvas::Style::Solid(color),
+                        rule: canvas::fill::Rule::EvenOdd,
+                    },
+                );
+                frame.stroke(
+                    &path,
+                    Stroke {
+                        style: canvas::Style::Solid(color),
+                        width: 1.0,
+                        ..Default::default()
+                    },
+                );
+            });
+        });
+        /*
         if let Some(rotate) = rotate {
             self.frame.with_save(|frame| {
                 frame.translate(Vector::new(pos.x, pos.y));
@@ -264,7 +304,7 @@ where
             };
 
             self.frame.fill_text(text_canvas);
-        }
+        }*/
 
         Ok(())
     }
