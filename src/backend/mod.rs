@@ -301,7 +301,7 @@ where
             wrapping: iced_widget::core::text::Wrapping::Word,
         });
         let size = p.min_bounds();
-        Ok((size.width as u32, size.height as u32))
+        Ok(((size.width * 1.1) as u32, size.height as u32))
     }
 
     #[inline]
